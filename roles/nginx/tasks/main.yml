@@ -1,0 +1,30 @@
+---
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  notify:
+    - restart nginx
+
+- name: Disabled default
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify:
+    - restart nginx
+
+- name: Add proxy server
+  template:
+    src: service.conf.j2
+    dest: /etc/nginx/sites-available/{{ service }}
+
+- name: Enable proxy server
+  file:
+    src: /etc/nginx/sites-available/{{ service }}
+    dest: /etc/nginx/sites-enabled/{{ service }}
+    state: link
+  notify:
+    - restart nginx

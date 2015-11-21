@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+export GIT_WORK_TREE="/var/www/{{ service }}"
+
+echo "--> Creating dir..."
+mkdir -p $GIT_WORK_TREE
+
+echo "--> Checking out..."
+git checkout -f
+
+echo "--> Installing libraries..."
+cd $GIT_WORK_TREE
+npm install
+{% if has_build %}
+echo "--> Building files..."
+npm run build
+{% endif %}
+echo "--> Restaring app..."
+pm2 reload all
+
+echo "Complete"

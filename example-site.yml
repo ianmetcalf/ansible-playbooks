@@ -1,0 +1,17 @@
+---
+
+- hosts: "app-server"
+  remote_user: root
+
+  vars:
+    organization: "metcalfbuilt"
+    service: "some-app"
+    repo: "ianmetcalf/some-app"
+    node_env: test
+    has_build: true
+
+  roles:
+    - firewall
+    - nginx
+    - pm2
+    - deploy

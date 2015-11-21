@@ -1,0 +1,46 @@
+---
+
+- name: Set node environment
+  lineinfile:
+    dest: /etc/environment
+    regexp: "^NODE_ENV="
+    line: "NODE_ENV={{ node_env }}"
+    create: yes
+    state: present
+
+- name: Install git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Ensure github.com is a known host
+  lineinfile:
+    dest: /root/.ssh/known_hosts
+    regexp: "^github\\.com"
+    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    create: yes
+    state: present
+
+- name: Checkout repo
+  git:
+    repo: "ssh://git@github.com/{{ repo }}.git"
+    dest: /var/{{ organization }}/{{ service }}
+    bare: yes
+    force: yes
+    accept_hostkey: yes
+
+- name: Add post deploy hook
+  template:
+    src: post-receive.j2
+    dest: /var/{{ organization }}/{{ service }}/hooks/post-receive
+    mode: 0755
+
+- name: Run post deploy hook
+  shell: /var/{{ organization }}/{{ service }}/hooks/post-receive
+  args:
+    chdir: /var/{{ organization }}/{{ service }}
+
+- name: Start app
+  shell: pm2 start /var/www/{{ service }}/bin/www --name {{ service }}

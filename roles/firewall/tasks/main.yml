@@ -1,0 +1,41 @@
+---
+
+- name: Install ufw
+  apt:
+    name: ufw
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  notify:
+    - reload ufw
+
+- name: Allow incoming ssh connections
+  ufw:
+    rule: allow
+    port: ssh
+    proto: tcp
+  notify:
+    - reload ufw
+
+- name: Allow incoming server connections
+  ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+  notify:
+    - reload ufw
+
+- name: Block all other incoming connections
+  ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+  notify:
+    - reload ufw
+
+- name: Install fail2ban
+  apt:
+    name: fail2ban
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400

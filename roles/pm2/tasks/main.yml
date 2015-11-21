@@ -1,0 +1,12 @@
+---
+
+- name: Install pm2
+  npm:
+    name: pm2
+    global: yes
+    state: latest
+  notify:
+    - restart pm2
+
+- name: Install startup script
+  command: pm2 startup ubuntu
