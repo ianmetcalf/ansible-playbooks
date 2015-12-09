@@ -7,11 +7,13 @@
     organization: "metcalfbuilt"
     service: "some-app"
     repo: "ianmetcalf/some-app"
+    node_version: "4.2"
     node_env: test
     has_build: true
 
   roles:
     - firewall
     - nginx
+    - nodejs
     - pm2
     - deploy
