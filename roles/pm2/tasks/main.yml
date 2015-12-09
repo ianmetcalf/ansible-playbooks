@@ -9,4 +9,6 @@
     - restart pm2
 
 - name: Install startup script
-  command: pm2 startup ubuntu
+  shell: pm2 startup ubuntu
+  args:
+    creates: /etc/init.d/pm2-init.sh
