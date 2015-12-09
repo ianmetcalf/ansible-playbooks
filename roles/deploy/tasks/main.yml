@@ -42,5 +42,11 @@
   args:
     chdir: /var/{{ organization }}/{{ service }}
 
+- name: Check if app is running
+  shell: pm2 list | grep -c {{ service }}
+  register: running
+  changed_when: false
+
 - name: Start app
   shell: pm2 start /var/www/{{ service }}/bin/www --name {{ service }}
+  when: running.stdout|int < 1
